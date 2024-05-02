@@ -13,6 +13,8 @@ class Vendor(models.Model):
     def __str__(self):
         return self.name
 class PurchaseOrder(models.Model):
+    issues = models.TextField(null=True, blank=True)
+
     po_number = models.CharField(max_length=50, unique=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)
