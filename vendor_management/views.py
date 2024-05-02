@@ -1,4 +1,3 @@
-# vendor_management/views.py
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -20,17 +19,17 @@ class VendorViewSet(viewsets.ModelViewSet):
         
         # Calculate On-Time Delivery Rate
         on_time_deliveries = completed_pos.filter(delivery_date__lte=F('acknowledgment_date')).count()
-        on_time_delivery_rate = (on_time_deliveries / total_completed_pos) * 100 if total_completed_pos > 0 else 0.0
+        on_time_delivery_rate = (on_time_deliveries * 100.0) / total_completed_pos if total_completed_pos > 0 else 0.0
         
         # Calculate Quality Rating Average
-        quality_rating_avg = completed_pos.aggregate(Avg('quality_rating'))['quality_rating__avg'] or 0.0
+        quality_rating_avg = completed_pos.aggregate(avg_quality=Avg('quality_rating'))['avg_quality'] or 0.0
         
         # Calculate Average Response Time
-        avg_response_time = completed_pos.exclude(acknowledgment_date=None).aggregate(Avg(F('acknowledgment_date') - F('issue_date')))['acknowledgment_date__avg'] or 0.0
+        avg_response_time = completed_pos.exclude(acknowledgment_date=None).aggregate(avg_response=Avg(F('acknowledgment_date') - F('issue_date')))['avg_response'] or 0.0
         
         # Calculate Fulfillment Rate
         fulfilled_pos = completed_pos.filter(issues=None)
-        fulfillment_rate = (fulfilled_pos.count() / total_completed_pos) * 100 if total_completed_pos > 0 else 0.0
+        fulfillment_rate = (fulfilled_pos.count() * 100.0) / total_completed_pos if total_completed_pos > 0 else 0.0
         
         vendor.on_time_delivery_rate = on_time_delivery_rate
         vendor.quality_rating_avg = quality_rating_avg
