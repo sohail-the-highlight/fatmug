@@ -2,6 +2,10 @@
 pip install -r requirements.txt
 
 
+RUN:py manage.py makemigrations
+
+RUN:py manage.py migrate
+
 
 
 Start the Django development server:py manage.py runserver
